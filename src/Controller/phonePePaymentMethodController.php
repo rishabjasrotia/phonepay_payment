@@ -2,6 +2,7 @@
 
 namespace Drupal\phonepe_payment;
 
+use Drupal\Core\Routing\TrustedRedirectResponse;
 use GuzzleHttp\ClientInterface;
 
 /**
@@ -9,56 +10,85 @@ use GuzzleHttp\ClientInterface;
  */
 class PhonePePaymentMethodController {
 
-  public function payment() {
+  public function payment($paymentDetails = []) {
+
+    $messenger = \Drupal::messenger();
+
+    if (empty($paymentDetails)) {
+      return;
+    }
+
+    $config = \Drupal::config('phonepe_payment.settings');
+
     // Phone Pay API credentials
-    $phone_pay_merchant_id = 'your_merchant_id';
-    $phone_pay_secret_key = 'your_secret_key';
+    $phone_pay_merchant_id = $config->get('phonepe_merchant_id');
+    $phone_pay_api_key = $config->get('phonepe_api_key');
+    $phone_pay_api_url = $config->get('phonepe_pay_url');
+    $phone_pay_redirect_url = $config->get('phonepe_redirect_url');
+    $phone_pay_user_id = $config->get('phonepe_user_id');
 
     // Transaction details
-    $amount = 100;
+    $amount = $paymentDetails['amount'];
     $currency = 'INR';
-    $transaction_id = uniqid();
+    $order_id = uniqid();
+    $merhcant_trans_id = uniqid();
+    $name = $paymentDetails['name'];
+    $email = $paymentDetails['email'];
+    $mobile = $paymentDetails['mobile'];
+    $description  = $paymentDetails['description'];
 
-    // Phone Pay API endpoint
-    $phone_pay_url = 'https://api.phonepay.io/v1/charge';
-
-    // Prepare the request payload
-    $request_payload = [
-      'merchant_id' => $phone_pay_merchant_id,
-      'transaction_id' => $transaction_id,
-      'amount' => $amount,
-      'currency' => $currency
+    $paymentData = [
+      'merchantId' => $phone_pay_merchant_id,
+      'merchantTransactionId' => $merhcant_trans_id, // test transactionID
+      "merchantUserId"=> $phone_pay_user_id,
+      'amount' => ($amount * 100),
+      'redirectUrl'=> $phone_pay_redirect_url,
+      'redirectMode'=> "POST",
+      'callbackUrl'=> $phone_pay_redirect_url,
+      "merchantOrderId"=> $order_id,
+      "mobileNumber"=> $mobile,
+      "message"=> $description,
+      "email"=> $email,
+      "shortName"=> $name,
+      "paymentInstrument"=> [
+        "type"=> "PAY_PAGE",
+      ]
     ];
 
-    // Generate the request signature
-    $signature = hash_hmac('sha256', json_encode($request_payload), $phone_pay_secret_key);
-
-    // Add the signature to the request payload
-    $request_payload['signature'] = $signature;
+    $jsonencode = json_encode($paymentData);
+    $payloadMain = base64_encode($jsonencode);
+    $salt_index = 1; //key index 1
+    $payload = $payloadMain . "/pg/v1/pay" . $phone_pay_api_key;
+    $sha256 = hash("sha256", $payload);
+    $final_x_header = $sha256 . '###' . $salt_index;
+    $request = json_encode(['request'=> $payloadMain]);
 
     // Send the request to Phone Pay API
     $httpClient = \Drupal::httpClient();
-    $response  = $httpClient->request('POST', $phone_pay_url, $request_payload);
+    $response  = $httpClient->request('POST', $phone_pay_api_url, $request);
     $response_payload = json_decode($response->getBody()->getContents(), TRUE);
 
     // Process the response from Phone Pay API
     if ($response_data) {
-      if ($response_payload['status'] == 'success') {
+      if ($response_payload['success'] == '1') {
         // Payment success
-        $transaction_reference = $response_payload['transaction_reference'];
-        // Save the transaction details to your database
-        // Redirect the user to a success page
+        $paymentCode= $response_payload['code'];
+        $paymentMsg= $response_payload['message'];
+        $payUrl= $response_payload['data']->instrumentResponse->redirectInfo->url;
+        return new TrustedRedirectResponse($payUrl);
+        // Redirect the to Pay URL
       } else {
         // Payment failed
-        $error_message = $response_payload['error_message'];
+        $message = $response_payload['error_message'];
         // Display the error message to the user
       }
     } else {
       // Error occurred while communicating with Phone Pay API
-      $error_message = 'Error occurred while communicating with Phone Pay API';
+      $message = 'Error occurred while communicating with Phone Pay API';
       // Display the error message to the user
     }
 
+    $messenger->addMessage(t($error_message));
 
   }
 }
