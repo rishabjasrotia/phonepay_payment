@@ -84,6 +84,16 @@ class PhonePeCheckout extends OffsitePaymentGatewayBase {
       '#default_value' => $merchantWEB,
       '#required' => TRUE,
     ];
+    $phonepe_pay_url='';
+    if(isset($this->configuration['phonepe_pay_url'])){
+      $phonepe_pay_url=$this->configuration['phonepe_pay_url'];
+    }
+    $form['phonepe_pay_url'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('PhonePe API URL'),
+      '#default_value' => $phonepe_pay_url,
+      '#required' => TRUE,
+    ];
     $merchantIndustryType='';
     if(isset($this->configuration['merchant_industry_type'])){
         $merchantIndustryType=$this->configuration['merchant_industry_type'];
@@ -114,6 +124,7 @@ class PhonePeCheckout extends OffsitePaymentGatewayBase {
       $this->configuration['phonepe_api_key'] = $values['phonepe_api_key'];
       $this->configuration['phonepe_merchant_website'] = $values['phonepe_merchant_website'];
       $this->configuration['phonepe_redirect_url'] = $values['phonepe_redirect_url'];
+      $this->configuration['phonepe_pay_url'] = $values['phonepe_pay_url'];
     }
   }
 
