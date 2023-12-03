@@ -70,7 +70,7 @@ class PhonePeCheckoutForm extends BasePaymentOffsiteForm {
     $redirectURL = $phonepe->standardCheckout()->createTransaction($amountInPaisa, $userMobile, $transactionID)->getTransactionURL();
 
     \Drupal::logger('phonepay_payment')->notice("Redirect URL: " . $redirectURL . PHP_EOL);
-    return new TrustedRedirectResponse($redirectURL);
+    return $this->buildRedirectForm($form, $form_state, $redirectURL, $data, self::REDIRECT_GET);
   }
 
 }
