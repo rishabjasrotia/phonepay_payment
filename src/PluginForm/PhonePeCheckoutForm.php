@@ -56,7 +56,7 @@ class PhonePeCheckoutForm extends BasePaymentOffsiteForm {
       $phonepe_merchant_user_id, // Merchant User ID
       $phonepe_salt_key, // Salt Key
       $phonepe_salt_index, // Salt Index
-      $redirect_url, // Redirect URL, can be defined on per transaction basis
+      $callback_url, // Redirect URL, can be defined on per transaction basis
       $callback_url, // Callback URL, can be defined on per transaction basis
       $phonePeENV // or "PROD"
     );
