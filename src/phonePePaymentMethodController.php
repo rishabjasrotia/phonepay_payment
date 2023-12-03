@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\phonepe_payment;
+namespace Drupal\phonepay_payment;
 
 use Drupal\Core\Routing\TrustedRedirectResponse;
 use GuzzleHttp\ClientInterface;
@@ -18,7 +18,7 @@ class PhonePePaymentMethodController {
       return;
     }
 
-    $config = \Drupal::config('phonepe_payment.settings');
+    $config = \Drupal::config('phonepay_payment.settings');
 
     // Phone Pay API credentials
     $phone_pay_merchant_id = $config->get('phonepe_merchant_id');

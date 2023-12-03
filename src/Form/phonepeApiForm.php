@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\phonepe_payment\Form;
+namespace Drupal\phonepay_payment\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -11,13 +11,13 @@ class phonepeApiForm extends ConfigFormBase {
    *
    * @var string
    */
-  const SETTINGS = 'phonepe_payment.settings';
+  const SETTINGS = 'phonepay_payment.settings';
 
   /**
    * {@inheritdoc}
    */
   public function getFormId() {
-    return 'phonepe_payment_settings';
+    return 'phonepay_payment_settings';
   }
 
   /**

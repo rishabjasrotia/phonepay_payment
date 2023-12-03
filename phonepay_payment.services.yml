@@ -1,4 +1,4 @@
 services:
-  phonepe_payment.payment:
-    class:  Drupal\phonepe_payment\PhonePePaymentMethodController
+  phonepay_payment.payment:
+    class:  Drupal\phonepay_payment\PhonePePaymentMethodController
     autowire: true

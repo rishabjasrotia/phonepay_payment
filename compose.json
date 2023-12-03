@@ -1,0 +1,10 @@
+{
+  "name": "drupal/phonepay_payment",
+  "type": "drupal-module",
+  "description": "Provides Commerce integration for PhonePe Payment Gateway",
+  "homepage": "http://drupal.org/project/phonepay_payment",
+  "license": "GPL-2.0+",
+  "require": {
+    "drupal/commerce": "~2"
+  }
+}

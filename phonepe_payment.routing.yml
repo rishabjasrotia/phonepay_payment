@@ -1,7 +1,0 @@
-phonepe_payment.settings:
-  path: '/admin/config/phonepe_payment/settings'
-  defaults:
-    _form: '\Drupal\phonepe_payment\Form\phonepeApiForm'
-    _title: 'PhonePe Configuration Form'
-  requirements:
-    _permission: 'administer site configuration'
