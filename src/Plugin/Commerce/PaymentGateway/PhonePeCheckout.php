@@ -160,6 +160,7 @@ class PhonePeCheckout extends OffsitePaymentGatewayBase {
    * {@inheritdoc}
    */
   public function onReturn(OrderInterface $order, Request $request) {
+    \Drupal::logger('phonepay_payment')->warning('<pre><code>' . print_r($redirectURL, TRUE) . '</code></pre>');
     $paramlist = array();
     $txnid                     = $request->get('TXNID');
     $paramlist['RESPCODE']     = $request->get('RESPCODE');
