@@ -26,6 +26,8 @@ class PhonePeCheckoutForm extends BasePaymentOffsiteForm {
     $order = Order::load($order_id);
     $user_id = \Drupal::currentUser()->id();
     $address = $order->getBillingProfile()->address->first();
+    $billing_profile = $order->getBillingProfile();
+    $phone = $billing_profile->get('field_mobile')->value;
     // $mode = $payment_gateway_plugin->getConfiguration()['pmode'];
     $mode = $payment_gateway_plugin->getConfiguration()['mode'];
     if($mode == 'test') {
@@ -60,7 +62,7 @@ class PhonePeCheckoutForm extends BasePaymentOffsiteForm {
     );
 
     $amountInPaisa = round($payment->getAmount()->getNumber(), 2); // Amount in Paisa
-    $userMobile = "9999999999"; // User Mobile Number
+    $userMobile = $phone; // User Mobile Number
     $transactionID = $order_id; // Transaction ID to track and identify the transaction, make sure to save this in your database.
 
     $redirectURL = $phonepe->standardCheckout()->createTransaction($amountInPaisa, $userMobile, $transactionID)->getTransactionURL();
