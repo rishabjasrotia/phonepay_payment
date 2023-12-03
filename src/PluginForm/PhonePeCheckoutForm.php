@@ -83,13 +83,6 @@ class PhonePeCheckoutForm extends BasePaymentOffsiteForm {
     $data['variables[payment_gateway]'] = $payment->getPaymentGatewayId();
     $data['variables[order]'] = $payment->getOrderId();
 
-    // Order and billing address.
-    $order = $payment->getOrder();
-    $billing_address = $order->getBillingProfile()->get('address');
-    $data['name'] = $billing_address->getGivenName() . ' ' . $billing_address->getFamilyName();
-    $data['city'] = $billing_address->getLocality();
-    $data['state'] = $billing_address->getAdministrativeArea();
-
     // Form url values.
     $data['continueurl'] = $form['#return_url'];
     $data['cancelurl'] = $form['#cancel_url'];
