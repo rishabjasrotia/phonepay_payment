@@ -7,6 +7,8 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\commerce_order\Entity\Order;
 use Drupal\Component\Utility\Crypt;
+use Drupal\Core\Routing\TrustedRedirectResponse;
+
 
 use Drupal\phonepay_payment\PhonePe;
 
@@ -61,14 +63,13 @@ class PhonePeCheckoutForm extends BasePaymentOffsiteForm {
       $phonePeENV // or "PROD"
     );
 
-    $amountInPaisa = round($payment->getAmount()->getNumber(), 2); // Amount in Paisa
+    $amountInPaisa = round($payment->getAmount()->getNumber(), 2) * 100; // Amount in Paisa
     $userMobile = $phone; // User Mobile Number
     $transactionID = $order_id; // Transaction ID to track and identify the transaction, make sure to save this in your database.
-
     $redirectURL = $phonepe->standardCheckout()->createTransaction($amountInPaisa, $userMobile, $transactionID)->getTransactionURL();
 
-    echo "Redirect URL: " . $redirectURL . PHP_EOL;
-    header("Location: " . $redirectURL);
+    \Drupal::logger('phonepay_payment')->notice("Redirect URL: " . $redirectURL . PHP_EOL);
+    return $this->buildRedirectForm($form, $form_state, $redirectURL, [], self::REDIRECT_GET);
   }
 
 }

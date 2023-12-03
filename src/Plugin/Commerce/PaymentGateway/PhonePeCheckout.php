@@ -160,20 +160,22 @@ class PhonePeCheckout extends OffsitePaymentGatewayBase {
    * {@inheritdoc}
    */
   public function onReturn(OrderInterface $order, Request $request) {
+    \Drupal::logger('phonepay_payment')->warning('<pre><code>' . print_r($request, TRUE) . '</code></pre>');
     $paramlist = array();
-    $txnid                     = $request->get('TXNID');
-    $paramlist['RESPCODE']     = $request->get('RESPCODE');
-    $paramlist['RESPMSG']      = $request->get('RESPMSG');
-    $paramlist['STATUS']       = $request->get('STATUS');
+    $txnid                     = $request->get('transactionId');
+    $paramlist['code']     = $request->get('code');
+    $paramlist['message']      = $request->get('message');
+    $paramlist['success']       = $request->get('success');
     $paramlist['MID']          = $request->get('MID');
-    $paramlist['TXNAMOUNT']    = $request->get('TXNAMOUNT');
+    $paramlist['amount']    = $request->get('amount');
     $paramlist['ORDERID']      = $txnid;
-    $paramlist['CHECKSUMHASH'] = $request->get('CHECKSUMHASH');
+    $paramlist['mobileNumber'] = $request->get('mobileNumber');
     $valid_checksum=TRUE;
+    \Drupal::logger('phonepay_payment')->warning('<pre><code>' . print_r($paramlist, TRUE) . '</code></pre>');
 
     if($valid_checksum) {
         $a = 0;
-        if($paramlist['STATUS'] == 'TXN_SUCCESS') {
+        if($paramlist['success'] == TRUE) {
             $payment_storage = $this->entityTypeManager->getStorage('commerce_payment');
             $payment = $payment_storage->create([
                 'state' => 'authorization',
@@ -182,18 +184,18 @@ class PhonePeCheckout extends OffsitePaymentGatewayBase {
                 'order_id' => $order->id(),
                 'test' => $this->getMode() == 'test',
                 'remote_id' => $order->id(),
-                'remote_state' => $paramlist['STATUS'],
+                'remote_state' => $paramlist['success'],
                 'authorized' => $this->time->getRequestTime(),
             ]);
             $payment->save();
-            drupal_set_message($this->t('Your payment was successful with Order id : @orderid and Transaction id : @transaction_id', ['@orderid' => $order->id(), '@transaction_id' => $txnid]));
+            \Drupal::messenger()->addMessage($this->t('Your payment was successful with Order id : @orderid and Transaction id : @transaction_id', ['@orderid' => $order->id(), '@transaction_id' => $txnid]));
         }
         else {
-            drupal_set_message($this->t('Transaction Failed'), 'error');
+          \Drupal::messenger()->addMessage($this->t('Transaction Failed'), 'error');
         }
     }
     else {
-        drupal_set_message($this->t('Checksum mismatched.'), 'error');
+      \Drupal::messenger()->addMessage($this->t('Checksum mismatched.'), 'error');
     }
   }
 }
