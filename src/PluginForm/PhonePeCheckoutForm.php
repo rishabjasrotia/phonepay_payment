@@ -47,7 +47,6 @@ class PhonePeCheckoutForm extends BasePaymentOffsiteForm {
     $phonepe_merchant_user_id = $payment_gateway_plugin->getConfiguration()['phonepe_merchant_user_id'];
     $phonepe_salt_key = $payment_gateway_plugin->getConfiguration()['phonepe_salt_key'];
     $phonepe_salt_index = $payment_gateway_plugin->getConfiguration()['phonepe_salt_index'];
-
     $redirect_url =  Url::FromRoute('phonepay_payment.redirect_url', ['order_id' => $order_id], array('absolute' => true))->toString();
     $callback_url  = Url::FromRoute('phonepay_payment.callback_url', ['order_id' => $order_id], array('absolute' => true))->toString();;
 
