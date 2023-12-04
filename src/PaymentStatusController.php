@@ -44,7 +44,7 @@ class PaymentStatusController  {
           'remote_state' => $payload['code'],
         ]);
         $payment->save();
-        \Drupal::messenger()->addMessage(t('Your payment was successful with Order id : @orderid and Transaction id : @transaction_id', ['@orderid' => $order->id(), '@transaction_id' => $txnid]));
+        \Drupal::messenger()->addMessage(t('Your payment was successful with Order id : @orderid and Transaction id : @transaction_id', ['@orderid' => $order->id(), '@transaction_id' => $order->id()]));
       }
     }
 
