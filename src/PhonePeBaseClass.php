@@ -5,7 +5,7 @@ namespace Drupal\phonepay_payment;
 use GuzzleHttp\Client;
 use Drupal\phonepay_payment\PhonePe;
 
-class BaseClass
+class PhonePeBaseClass
 {
     protected $config;
     protected $client;

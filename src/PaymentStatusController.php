@@ -28,28 +28,32 @@ class PaymentStatusController  {
     $serverCallback = json_decode(\Drupal::request()->getContent(), TRUE); 
     if (!empty($serverCallback['response'])) {
       $payload = json_decode(base64_decode($serverCallback['response']), true);
-      if ($payload['success'] && $payload['code'] == 'PAYMENT_SUCCESS') {
-        // Payment Done update order details.
-        $order = Order::load($order_id);
-        /** @var PaymentGateway $paymentGateway */
-        $paymentGateway = $order->get('payment_gateway')->entity;
-        $payment_storage = \Drupal::entityTypeManager()->getStorage('commerce_payment');
-
-        $payment = $payment_storage->create([
-          'state' => 'completed',
-          'amount' => $order->getTotalPrice(),
-          'payment_gateway' => $paymentGateway->id(),
-          'order_id' => $order->id(),
-          'remote_id' => $order->id(),
-          'remote_state' => $payload['code'],
-        ]);
-        $payment->save();
-        \Drupal::messenger()->addMessage(t('Your payment was successful with Order id : @orderid and Transaction id : @transaction_id', ['@orderid' => $order->id(), '@transaction_id' => $order->id()]));
+      try {
+        if ($payload['success'] && $payload['code'] == 'PAYMENT_SUCCESS') {
+          // Payment Done update order details.
+          $order = Order::load($order_id);
+          /** @var PaymentGateway $paymentGateway */
+          $paymentGateway = $order->get('payment_gateway')->entity;
+          $payment_storage = \Drupal::entityTypeManager()->getStorage('commerce_payment');
+  
+          $payment = $payment_storage->create([
+            'state' => 'completed',
+            'amount' => $order->getTotalPrice(),
+            'payment_gateway' => $paymentGateway->id(),
+            'order_id' => $order->id(),
+            'remote_id' => $order->id(),
+            'remote_state' => $payload['code'],
+          ]);
+          $payment->save();
+          \Drupal::messenger()->addMessage(t('Your payment was successful with Order id : @orderid and Transaction id : @transaction_id', ['@orderid' => $order->id(), '@transaction_id' => $order->id()]));
+        }
+      } catch (Exception $e) {
+        
       }
     }
 
     return [
-      'success' => $response,
+      'success' => TRUE,
     ];
   }
 }
