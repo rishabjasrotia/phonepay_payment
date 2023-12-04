@@ -5,3 +5,17 @@ phonepay_payment.settings:
     _title: 'PhonePe Configuration Form'
   requirements:
     _permission: 'administer site configuration'
+phonepay_payment.redirect_url:
+  path: '/phonepay_payment/order/{order_id}'
+  defaults:
+    _controller: 'Drupal\phonepay_payment\PaymentStatusController::status'
+    _title: 'Payment Status'
+  requirements:
+    _permission: 'access content'
+phonepay_payment.callback_url:
+  path: '/phonepay_payment/callback/{order_id}'
+  defaults:
+    _controller: 'Drupal\phonepay_payment\PaymentStatusController::callback'
+    _title: 'Payment Callback'
+  requirements:
+    _permission: 'access content'
