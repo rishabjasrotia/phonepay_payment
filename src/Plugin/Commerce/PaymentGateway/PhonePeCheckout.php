@@ -129,42 +129,6 @@ class PhonePeCheckout extends OffsitePaymentGatewayBase {
    * {@inheritdoc}
    */
   public function onReturn(OrderInterface $order, Request $request) {
-    \Drupal::logger('phonepay_payment')->warning('<pre><code>' . print_r($request, TRUE) . '</code></pre>');
-    $paramlist = array();
-    $txnid                     = $request->get('transactionId');
-    $paramlist['code']     = $request->get('code');
-    $paramlist['message']      = $request->get('message');
-    $paramlist['success']       = $request->get('success');
-    $paramlist['MID']          = $request->get('MID');
-    $paramlist['amount']    = $request->get('amount');
-    $paramlist['ORDERID']      = $txnid;
-    $paramlist['mobileNumber'] = $request->get('mobileNumber');
-    $valid_checksum=TRUE;
-    \Drupal::logger('phonepay_payment')->warning('<pre><code>' . print_r($paramlist, TRUE) . '</code></pre>');
-
-    if($valid_checksum) {
-        $a = 0;
-        if($paramlist['success'] == TRUE) {
-            $payment_storage = $this->entityTypeManager->getStorage('commerce_payment');
-            $payment = $payment_storage->create([
-                'state' => 'authorization',
-                'amount' => $order->getTotalPrice(),
-                'payment_gateway' => $this->entityId,
-                'order_id' => $order->id(),
-                'test' => $this->getMode() == 'test',
-                'remote_id' => $order->id(),
-                'remote_state' => $paramlist['success'],
-                'authorized' => $this->time->getRequestTime(),
-            ]);
-            $payment->save();
-            \Drupal::messenger()->addMessage($this->t('Your payment was successful with Order id : @orderid and Transaction id : @transaction_id', ['@orderid' => $order->id(), '@transaction_id' => $txnid]));
-        }
-        else {
-          \Drupal::messenger()->addMessage($this->t('Transaction Failed'), 'error');
-        }
-    }
-    else {
-      \Drupal::messenger()->addMessage($this->t('Checksum mismatched.'), 'error');
-    }
+    // Move to custom controller
   }
 }
