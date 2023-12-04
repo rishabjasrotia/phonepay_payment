@@ -43,66 +43,46 @@ class PhonePeCheckout extends OffsitePaymentGatewayBase {
   */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     $form = parent::buildConfigurationForm($form, $form_state);
-    // dpm($form);
-    $merchantID='';
-    if(isset($this->configuration['phonepe_merchant_id'])){
-      $merchantID=$this->configuration['phonepe_merchant_id'];
-    }
+
     $form['phonepe_merchant_id'] = [
       '#type' => 'textfield',
       '#title' => $this->t('PhonePe Merchant Id'),
-      '#default_value' => $merchantID,
-      '#required' => TRUE,
-    ];
-    $merchantUserID='';
-    if(isset($this->configuration['phonepe_merchant_user_id'])){
-      $merchantUserID=$this->configuration['phonepe_merchant_user_id'];
-    }
-    $form['phonepe_merchant_user_id'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('PhonePe Merchant User Id'),
-      '#default_value' => $merchantUserID,
-      '#required' => TRUE,
-    ];
-    $merchantApiKEY='';
-    if(isset($this->configuration['phonepe_api_key'])){
-      $merchantApiKEY=$this->configuration['phonepe_api_key'];
-    }
-    $form['phonepe_api_key'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('PhonePe Merchant API Key'),
-      '#default_value' => $merchantApiKEY,
-      '#required' => FALSE,
-    ];
-    $merchantSaltKey='';
-    if(isset($this->configuration['phonepe_salt_key'])){
-      $merchantSaltKey=$this->configuration['phonepe_salt_key'];
-    }
-    $form['phonepe_salt_key'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('PhonePe Salt Key'),
-      '#default_value' => $merchantSaltKey,
-      '#required' => TRUE,
-    ];
-    $merchantSaltIndex='';
-    if(isset($this->configuration['phonepe_salt_index'])){
-      $merchantSaltIndex=$this->configuration['phonepe_salt_index'];
-    }
-    $form['phonepe_salt_index'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('PhonePe Salt Index'),
-      '#default_value' => $merchantSaltIndex,
+      '#default_value' => $this->configuration['phonepe_merchant_id'],
       '#required' => TRUE,
     ];
 
-    $merchantWEB='';
-    if(isset($this->configuration['phonepe_merchant_website'])){
-      $merchantWEB=$this->configuration['phonepe_merchant_website'];
-    }
+    $form['phonepe_merchant_user_id'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('PhonePe Merchant User Id'),
+      '#default_value' => $this->configuration['phonepe_merchant_user_id'],
+      '#required' => TRUE,
+    ];
+
+    $form['phonepe_api_key'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('PhonePe Merchant API Key'),
+      '#default_value' => $this->configuration['phonepe_api_key'],
+      '#required' => FALSE,
+    ];
+
+    $form['phonepe_salt_key'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('PhonePe Salt Key'),
+      '#default_value' => $this->configuration['phonepe_salt_key'],
+      '#required' => TRUE,
+    ];
+
+    $form['phonepe_salt_index'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('PhonePe Salt Index'),
+      '#default_value' => $this->configuration['phonepe_salt_index'],
+      '#required' => TRUE,
+    ];
+
     $form['phonepe_merchant_website'] = [
       '#type' => 'textfield',
       '#title' => $this->t('PhonePe Merchant Website'),
-      '#default_value' => $merchantWEB,
+      '#default_value' => $this->configuration['phonepe_merchant_website'],
       '#required' => FALSE,
     ];
 

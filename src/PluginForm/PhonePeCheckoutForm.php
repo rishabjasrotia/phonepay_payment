@@ -17,6 +17,7 @@ class PhonePeCheckoutForm extends BasePaymentOffsiteForm {
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
 
     $form = parent::buildConfigurationForm($form, $form_state);
+    
     $redirect_method = 'post';
     $payment = $this->entity;
 
@@ -42,14 +43,11 @@ class PhonePeCheckoutForm extends BasePaymentOffsiteForm {
     }
 
     // PhonePe Transaction details
-    //$transactionURL=$payment_gateway_plugin->getConfiguration()['merchant_transaction_url'];
     $phonepe_merchant_id = $payment_gateway_plugin->getConfiguration()['phonepe_merchant_id'];
     $phonepe_merchant_user_id = $payment_gateway_plugin->getConfiguration()['phonepe_merchant_user_id'];
     $phonepe_salt_key = $payment_gateway_plugin->getConfiguration()['phonepe_salt_key'];
     $phonepe_salt_index = $payment_gateway_plugin->getConfiguration()['phonepe_salt_index'];
-    //$redirect_url = $transactionURL;
 
-    // $callback_url =  Url::FromRoute('commerce_payment.checkout.return', ['commerce_order' => $order_id, 'step' => 'payment'], array('absolute' => true))->toString();
     $redirect_url =  Url::FromRoute('phonepay_payment.redirect_url', ['order_id' => $order_id], array('absolute' => true))->toString();
     $callback_url  = Url::FromRoute('phonepay_payment.callback_url', ['order_id' => $order_id], array('absolute' => true))->toString();;
 
@@ -60,26 +58,27 @@ class PhonePeCheckoutForm extends BasePaymentOffsiteForm {
       $phonepe_salt_key = '099eb0cd-02cf-4e2a-8aca-3e6c6aff0399';
       $phonepe_salt_index = 1;
     }
+
     // Create PhonePe transaction request
     $phonepe = PhonePe::init(
-      $phonepe_merchant_id, // Merchant ID
-      $phonepe_merchant_user_id, // Merchant User ID
-      $phonepe_salt_key, // Salt Key
-      $phonepe_salt_index, // Salt Index
-      $redirect_url, // Redirect URL, can be defined on per transaction basis
-      $callback_url, // Callback URL, can be defined on per transaction basis
-      $phonePeENV // "DEV" or "PROD"
+      $phonepe_merchant_id, 
+      $phonepe_merchant_user_id, 
+      $phonepe_salt_key,
+      $phonepe_salt_index,
+      $redirect_url,
+      $callback_url, 
+      $phonePeENV 
     );
 
-    $amountInPaisa = round($payment->getAmount()->getNumber(), 2) * 100; // Amount in Paisa.
-    $userMobile = $phone; // User Mobile Number.
-    $transactionID = $order_id; // Transaction ID to track and identify the transaction.
+    // Standard Checkout 
+    $amountInPaisa = round($payment->getAmount()->getNumber(), 2) * 100;
+    $userMobile = $phone; 
+    $transactionID = $order_id;
     $redirectURL = $phonepe->standardCheckout()->createTransaction($amountInPaisa, $userMobile, $transactionID)->getTransactionURL();
    
+    // Update Order
     $order->setData('phonepe_request_identifier', $redirectURL);
     $order->save();
-
-    \Drupal::logger('phonepay_payment')->notice("Redirect URL: " . $redirectURL . PHP_EOL);
 
     return $this->buildRedirectForm($form, $form_state, $redirectURL, [], self::REDIRECT_GET);
   }
