@@ -1,10 +1,3 @@
-phonepay_payment.settings:
-  path: '/admin/config/phonepay_payment/settings'
-  defaults:
-    _form: '\Drupal\phonepay_payment\Form\phonepeApiForm'
-    _title: 'PhonePe Configuration Form'
-  requirements:
-    _permission: 'administer site configuration'
 phonepay_payment.redirect_url:
   path: '/phonepay_payment/order/{order_id}'
   defaults:
