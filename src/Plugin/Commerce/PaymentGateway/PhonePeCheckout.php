@@ -94,16 +94,7 @@ class PhonePeCheckout extends OffsitePaymentGatewayBase {
       '#default_value' => $merchantSaltIndex,
       '#required' => TRUE,
     ];
-    // $merchantEnv='';
-    // if(isset($this->configuration['phonepe_environment'])){
-    //   $merchantEnv=$this->configuration['phonepe_environment'];
-    // }
-    // $form['phonepe_environment'] = [
-    //   '#type' => 'textfield',
-    //   '#title' => $this->t('PhonePe Environment'),
-    //   '#default_value' => $merchantEnv,
-    //   '#required' => TRUE,
-    // ];
+
     $merchantWEB='';
     if(isset($this->configuration['phonepe_merchant_website'])){
       $merchantWEB=$this->configuration['phonepe_merchant_website'];
@@ -114,26 +105,7 @@ class PhonePeCheckout extends OffsitePaymentGatewayBase {
       '#default_value' => $merchantWEB,
       '#required' => FALSE,
     ];
-    // $phonepe_pay_url='';
-    // if(isset($this->configuration['phonepe_pay_url'])){
-    //   $phonepe_pay_url=$this->configuration['phonepe_pay_url'];
-    // }
-    // $form['phonepe_pay_url'] = [
-    //   '#type' => 'textfield',
-    //   '#title' => $this->t('PhonePe API URL'),
-    //   '#default_value' => $phonepe_pay_url,
-    //   '#required' => TRUE,
-    // ];
-    // $merchantCUSTCALLBACKURL='';
-    // if(isset($this->configuration['phonepe_redirect_url'])){
-    //     $merchantCUSTCALLBACKURL=$this->configuration['phonepe_redirect_url'];
-    // }
-    // $form['phonepe_redirect_url'] = [
-    //     '#type' => 'textfield',
-    //     '#title' => $this->t('Custom Call Back URL (if you want)'),
-    //     '#default_value' => $merchantCUSTCALLBACKURL,
-    //     '#required' => FALSE,
-    // ];
+
     return $form;
   }
 
@@ -148,11 +120,8 @@ class PhonePeCheckout extends OffsitePaymentGatewayBase {
       $this->configuration['phonepe_merchant_user_id'] = $values['phonepe_merchant_user_id'];
       $this->configuration['phonepe_api_key'] = $values['phonepe_api_key'];
       $this->configuration['phonepe_merchant_website'] = $values['phonepe_merchant_website'];
-      // $this->configuration['phonepe_redirect_url'] = $values['phonepe_redirect_url'];
-      // $this->configuration['phonepe_pay_url'] = $values['phonepe_pay_url'];
       $this->configuration['phonepe_salt_key'] = $values['phonepe_salt_key'];
       $this->configuration['phonepe_salt_index'] = $values['phonepe_salt_index'];
-      // $this->configuration['phonepe_environment'] = $values['phonepe_environment'];
     }
   }
 
