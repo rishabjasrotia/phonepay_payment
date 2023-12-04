@@ -69,25 +69,8 @@ class PhonePeCheckoutForm extends BasePaymentOffsiteForm {
     $transactionID = $order_id; // Transaction ID to track and identify the transaction, make sure to save this in your database.
     $redirectURL = $phonepe->standardCheckout()->createTransaction($amountInPaisa, $userMobile, $transactionID)->getTransactionURL();
 
-    $configuration = $payment_gateway_plugin->getConfiguration();
-
-    // Payment gateway configuration data.
-    $data['version'] = 'v10';
-    $data['merchant_id'] = $configuration['merchant_id'];
-    $data['agreement_id'] = $configuration['agreement_id'];
-    $data['language'] = $configuration['language'];
-
-    // Payment data.
-    $data['currency'] = $payment->getAmount()->getCurrencyCode();
-    $data['total'] = $payment->getAmount()->getNumber();
-    $data['variables[payment_gateway]'] = $payment->getPaymentGatewayId();
-    $data['variables[order]'] = $payment->getOrderId();
-
-    // Form url values.
-    $data['continueurl'] = $form['#return_url'];
-    $data['cancelurl'] = $form['#cancel_url'];
     \Drupal::logger('phonepay_payment')->notice("Redirect URL: " . $redirectURL . PHP_EOL);
-    return $this->buildRedirectForm($form, $form_state, $redirectURL, $data, self::REDIRECT_GET);
+    return $this->buildRedirectForm($form, $form_state, $redirectURL, [], self::REDIRECT_GET);
   }
 
 }
