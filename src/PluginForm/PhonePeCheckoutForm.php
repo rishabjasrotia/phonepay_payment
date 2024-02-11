@@ -17,7 +17,7 @@ class PhonePeCheckoutForm extends BasePaymentOffsiteForm {
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
 
     $form = parent::buildConfigurationForm($form, $form_state);
-    
+
     $redirect_method = 'post';
     $payment = $this->entity;
 
@@ -34,7 +34,7 @@ class PhonePeCheckoutForm extends BasePaymentOffsiteForm {
     // Blling Profile
     $billing_profile = $order->getBillingProfile();
     $phone = $billing_profile->get('field_mobile')->value;
-    
+
     $mode = $payment_gateway_plugin->getConfiguration()['mode'];
     if($mode == 'test') {
       $phonePeENV = 'DEV';
@@ -60,21 +60,21 @@ class PhonePeCheckoutForm extends BasePaymentOffsiteForm {
 
     // Create PhonePe transaction request
     $phonepe = PhonePe::init(
-      $phonepe_merchant_id, 
-      $phonepe_merchant_user_id, 
+      $phonepe_merchant_id,
+      $phonepe_merchant_user_id,
       $phonepe_salt_key,
       $phonepe_salt_index,
       $redirect_url,
-      $callback_url, 
-      $phonePeENV 
+      $callback_url,
+      $phonePeENV
     );
 
-    // Standard Checkout 
+    // Standard Checkout
     $amountInPaisa = round($payment->getAmount()->getNumber(), 2) * 100;
-    $userMobile = $phone; 
-    $transactionID = $order_id;
-    $redirectURL = $phonepe->standardCheckout()->createTransaction($amountInPaisa, $userMobile, $transactionID)->getTransactionURL();
-   
+    $userMobile = $phone;
+    $unique_transactionID = $order_id . "###" . time();
+    $redirectURL = $phonepe->standardCheckout()->createTransaction($amountInPaisa, $userMobile, $unique_transactionID)->getTransactionURL();
+
     // Update Order
     $order->setData('phonepe_request_identifier', $redirectURL);
     $order->save();
